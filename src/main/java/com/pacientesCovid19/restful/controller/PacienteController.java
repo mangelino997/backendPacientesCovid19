@@ -1,5 +1,6 @@
 package com.pacientesCovid19.restful.controller;
 
+import com.pacientesCovid19.restful.dto.PacienteDTO;
 import com.pacientesCovid19.restful.model.Color;
 import com.pacientesCovid19.restful.model.Paciente;
 import com.pacientesCovid19.restful.service.PacienteService;
@@ -31,7 +32,7 @@ public class PacienteController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<?> agregar(@RequestBody Paciente pacienteNuevo) {
+    public ResponseEntity<?> agregar(@RequestBody PacienteDTO pacienteNuevo) {
         try {
             Paciente paciente = elementoService.agregar(pacienteNuevo);
             return ResponseEntity.status(HttpStatus.CREATED).body(paciente);
