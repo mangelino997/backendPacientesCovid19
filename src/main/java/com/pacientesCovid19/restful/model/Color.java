@@ -7,8 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
  * @author Marcio
  */
 @Entity
-@Table(name = "ColorsDiagnostic")
-public class ColorDiagnostic {
+@Table(name = "Colores")
+public class Color {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")

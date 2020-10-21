@@ -1,7 +1,8 @@
 package com.pacientesCovid19.restful.controller;
 
-import com.pacientesCovid19.restful.model.ColorDiagnostic;
-import com.pacientesCovid19.restful.service.ColorDiagnosticService;
+import com.pacientesCovid19.restful.model.Color;
+import com.pacientesCovid19.restful.model.Paciente;
+import com.pacientesCovid19.restful.service.PacienteService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,29 +19,34 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Marcio
  */
 @RestController
-@RequestMapping("api/colordiagnostic")
-public class ColorDiagnosticController {
-    
+@RequestMapping("api/pacientes")
+public class PacienteController {
+
     @Autowired
-    ColorDiagnosticService elementoService;
-    
+    PacienteService elementoService;
+
     @GetMapping("")
-    public List<ColorDiagnostic> listar(){
+    public List<Paciente> listar() {
         return elementoService.listar();
     }
-    
+
     @PostMapping(value = "")
-    public ResponseEntity<?> agregar(@RequestBody ColorDiagnostic cd) {
+    public ResponseEntity<?> agregar(@RequestBody Paciente pacienteNuevo) {
         try {
-            ColorDiagnostic colorDiagnostic = elementoService.agregar(cd);
-            return ResponseEntity.status(HttpStatus.CREATED).body(colorDiagnostic);
+            Paciente paciente = elementoService.agregar(pacienteNuevo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(paciente);
         } catch (Error e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
     @PutMapping(value = "")
-    public ColorDiagnostic actualizar(@RequestBody ColorDiagnostic cd) {
-        return elementoService.actualizar(cd);
+    public ResponseEntity<?> actualizar(@RequestBody Paciente pacienteEditado) {
+        try {
+            Paciente paciente = elementoService.actualizar(pacienteEditado);
+            return ResponseEntity.status(HttpStatus.OK).body(paciente);
+        } catch (Error e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 }
