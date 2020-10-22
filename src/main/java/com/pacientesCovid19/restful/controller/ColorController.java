@@ -18,18 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Marcio
  */
 @RestController
-@RequestMapping("api/colores")
+@RequestMapping("api/")
 public class ColorController {
 
     @Autowired
     ColorService elementoService;
 
-    @GetMapping("")
+    @GetMapping("colores")
     public List<Color> listar() {
         return elementoService.listar();
     }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "colores")
     public ResponseEntity<?> agregar(@RequestBody Color cd) {
         try {
             Color color = elementoService.agregar(cd);
@@ -39,7 +39,7 @@ public class ColorController {
         }
     }
 
-    @PutMapping(value = "")
+    @PutMapping(value = "colores")
     public ResponseEntity<?> actualizar(@RequestBody Color cd) {
         try {
             Color color = elementoService.actualizar(cd);

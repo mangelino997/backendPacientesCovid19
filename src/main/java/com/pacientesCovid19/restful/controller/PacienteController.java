@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,18 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Marcio
  */
 @RestController
-@RequestMapping("api/pacientes")
+@RequestMapping("api/")
 public class PacienteController {
 
     @Autowired
     PacienteService elementoService;
 
-    @GetMapping("")
+    @GetMapping("pacientes")
     public FilasPacientesDTO listar() {
         return elementoService.listar();
     }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "pacientes")
     public ResponseEntity<?> agregar(@RequestBody PacienteDTO pacienteNuevo) {
         try {
             Paciente paciente = elementoService.agregar(pacienteNuevo);
@@ -42,13 +43,27 @@ public class PacienteController {
         }
     }
 
-    @PutMapping(value = "")
-    public ResponseEntity<?> actualizar(@RequestBody Paciente pacienteEditado) {
+    @GetMapping(value = "pacientes/{id}/status")
+    public ResponseEntity<?> actualizarEstado(@PathVariable long id) {
         try {
-            Paciente paciente = elementoService.actualizar(pacienteEditado);
+            Paciente paciente = elementoService.obtenerPorId(id);
+            elementoService.actualizarEstadoAtendido(paciente);
             return ResponseEntity.status(HttpStatus.OK).body(paciente);
         } catch (Error e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
+
+    /*
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<?> actualizar(@Re) {
+        try {
+            
+            Paciente paciente = elementoService.actualizar(pacienteAtendido);
+            return ResponseEntity.status(HttpStatus.OK).body(paciente);
+        } catch (Error e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+     */
 }

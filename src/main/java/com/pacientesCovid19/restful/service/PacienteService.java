@@ -27,18 +27,18 @@ public class PacienteService {
 
     FilasPacientesDTO filas = new FilasPacientesDTO();
 
-    @Transactional(readOnly = true) // operation read only
+    //Operacion de solo lectura. Devuelve las listas para cada color
+    @Transactional(readOnly = true)
     public FilasPacientesDTO listar() {
-
         List<Color> lc = colorRepository.findAll();
         lc.forEach(color -> {
-            List<Paciente> lista = pacienteRepository.findByColorIdOrderByDateAsc(color.getId());
-            seleccionarFila(lista, color.getColor());
+            List<Paciente> listaPorColor = pacienteRepository.findByColorIdOrderByDateAsc(color.getId());
+            seleccionarFila(listaPorColor, color.getColor());
         });
-
         return filas;
     }
 
+    //Asigna cada lista por color
     private void seleccionarFila(List<Paciente> lista, String color) {
         switch (color) {
             case "Verde":
@@ -58,6 +58,7 @@ public class PacienteService {
         }
     }
 
+    //Evalua al paciente. De tipo DTO porque los datos que ingresan son distintos a los datos del modelo.
     public Paciente agregar(PacienteDTO nuevoPaciente) {
 
         int valor_hipertension = nuevoPaciente.getHipertension().equalsIgnoreCase("Si") ? 100 : 0;
@@ -75,17 +76,20 @@ public class PacienteService {
         paciente.setDni(nuevoPaciente.getDni());
         paciente.setColor(color);
         paciente.setScore(puntaje);
-        paciente.setStatus(asignarStatus(color) < color.getCant_max_patient() ? "Siendo atendido" : "En espera");
+        paciente.setStatus("");
+        paciente.setStatus(cantidadSiendoAtendidos(color) < color.getCant_max_patient() ? "Siendo atendido" : "En espera");
         paciente.setDate(date);
         Paciente p = pacienteRepository.saveAndFlush(paciente);
         return p;
     }
 
-    private int asignarStatus(Color color) {
-        int cantidadSiendoAtendidos = pacienteRepository.cantidadPacientesSiendoAtendidos(color.getId());
-        return cantidadSiendoAtendidos;
+    //Determina la cantidad de pacientes con estado Siendo Atendidos
+    private int cantidadSiendoAtendidos(Color color) {
+        int cantidad = pacienteRepository.cantidadPacientesSiendoAtendidos(color.getId());
+        return cantidad;
     }
 
+    //Evalua por edad
     public int medirEdad(int edad) {
         if (edad < 6) {
             return 100;
@@ -104,6 +108,7 @@ public class PacienteService {
         }
     }
 
+    //Evalua por presion
     public int medirPresion(int presion) {
         if (presion < 13) {
             return 30;
@@ -114,6 +119,7 @@ public class PacienteService {
         }
     }
 
+    //Evalua por fiebre
     public int medirFiebre(double fiebre) {
         if (fiebre < 37.5) {
             return 0;
@@ -126,13 +132,28 @@ public class PacienteService {
         }
     }
 
-    /*private gestionFilas(Color color, List<Paciente> l){
-        
+    //Obtiene un paciente por id
+    public Paciente obtenerPorId(long id) {
+        return pacienteRepository.findById(id);
     }
-     */
-    public Paciente actualizar(Paciente paciente) {
+
+    //Actualiza el estado a Atendido
+    public Paciente actualizarEstadoAtendido(Paciente paciente) {
+        paciente.setStatus("Atendido");
         Paciente p = pacienteRepository.save(paciente);
+        
+        // se libera un lugar
+        Paciente proximoPaciente = pacienteRepository.proximoPacienteSiendoAtendido(paciente.getColor().getId());
+        if(proximoPaciente != null)
+            actualizarEstadoSiendoAtendido(proximoPaciente);
+        
         return p;
+    }
+
+    //Actualiza el estado a Siendo Atendido (cuando se libera un lugar)
+    public void actualizarEstadoSiendoAtendido(Paciente paciente) {
+        paciente.setStatus("Siendo atendido");
+        Paciente p = pacienteRepository.save(paciente);
     }
 
 }
