@@ -1,5 +1,6 @@
 package com.pacientesCovid19.restful.service;
 
+import com.pacientesCovid19.restful.dto.FilasPacientesDTO;
 import com.pacientesCovid19.restful.dto.PacienteDTO;
 import com.pacientesCovid19.restful.model.Color;
 import com.pacientesCovid19.restful.model.Paciente;
@@ -24,18 +25,46 @@ public class PacienteService {
     @Autowired
     IColorImpl colorRepository;
 
+    FilasPacientesDTO filas = new FilasPacientesDTO();
+
     @Transactional(readOnly = true) // operation read only
-    public List<Paciente> listar() {
-        return pacienteRepository.findAll();
+    public FilasPacientesDTO listar() {
+
+        List<Color> lc = colorRepository.findAll();
+        lc.forEach(color -> {
+            List<Paciente> lista = pacienteRepository.findByColorIdOrderByDateAsc(color.getId());
+            seleccionarFila(lista, color.getColor());
+        });
+
+        return filas;
+    }
+
+    private void seleccionarFila(List<Paciente> lista, String color) {
+        switch (color) {
+            case "Verde":
+                filas.setFilaVerde(lista);
+                break;
+            case "Amarillo":
+                filas.setFilaAmarillo(lista);
+                break;
+            case "Naranja":
+                filas.setFilaNaranja(lista);
+                break;
+            case "Rojo":
+                filas.setFilaRojo(lista);
+                break;
+            default:
+                return;
+        }
     }
 
     public Paciente agregar(PacienteDTO nuevoPaciente) {
 
+        int valor_hipertension = nuevoPaciente.getHipertension().equalsIgnoreCase("Si") ? 100 : 0;
         int valor_mareo = nuevoPaciente.getMareo().equalsIgnoreCase("Si") ? 100 : 0;
-        int valor_edad = medirEdad(nuevoPaciente.getEdad());
         int valor_presion = medirPresion(nuevoPaciente.getPresion());
         int valor_fiebre = medirFiebre(nuevoPaciente.getFiebre());
-        int valor_hipertension = nuevoPaciente.getHipertension().equalsIgnoreCase("Si") ? 100 : 0;
+        int valor_edad = medirEdad(nuevoPaciente.getEdad());
         int puntaje = valor_mareo + valor_edad + valor_presion + valor_fiebre + valor_hipertension;
 
         Date date = new Date(new java.util.Date().getTime());
@@ -46,13 +75,13 @@ public class PacienteService {
         paciente.setDni(nuevoPaciente.getDni());
         paciente.setColor(color);
         paciente.setScore(puntaje);
-        paciente.setStatus(asignarStatus(color) < color.getCant_max_patient()? "siendo atendido": "en espera");
+        paciente.setStatus(asignarStatus(color) < color.getCant_max_patient() ? "Siendo atendido" : "En espera");
         paciente.setDate(date);
         Paciente p = pacienteRepository.saveAndFlush(paciente);
         return p;
     }
-    
-    private int asignarStatus(Color color){
+
+    private int asignarStatus(Color color) {
         int cantidadSiendoAtendidos = pacienteRepository.cantidadPacientesSiendoAtendidos(color.getId());
         return cantidadSiendoAtendidos;
     }

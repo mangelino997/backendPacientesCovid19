@@ -1,5 +1,6 @@
 package com.pacientesCovid19.restful.controller;
 
+import com.pacientesCovid19.restful.dto.FilasPacientesDTO;
 import com.pacientesCovid19.restful.dto.PacienteDTO;
 import com.pacientesCovid19.restful.model.Color;
 import com.pacientesCovid19.restful.model.Paciente;
@@ -27,7 +28,7 @@ public class PacienteController {
     PacienteService elementoService;
 
     @GetMapping("")
-    public List<Paciente> listar() {
+    public FilasPacientesDTO listar() {
         return elementoService.listar();
     }
 

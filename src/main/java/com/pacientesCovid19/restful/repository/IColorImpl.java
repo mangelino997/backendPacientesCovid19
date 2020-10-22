@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IColorImpl extends JpaRepository<Color, Long> {
 
-    @Query(value = "SELECT * FROM Colores WHERE :puntaje >= range_min_value AND :puntaje < range_max_value", nativeQuery = true)
+    /* el intervalo es ( ] ya que no puede ser 0, pero si 500 (maximo) */
+    @Query(value = "SELECT * FROM Colores WHERE :puntaje > range_min_value AND :puntaje <= range_max_value", nativeQuery = true)
     public Color getColorBetweenRange(@Param("puntaje") int puntaje);
 
 }
