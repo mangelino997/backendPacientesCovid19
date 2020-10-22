@@ -1,6 +1,7 @@
 package com.pacientesCovid19.restful.service;
 
 import com.pacientesCovid19.restful.dto.FilasPacientesDTO;
+import com.pacientesCovid19.restful.dto.FiltroDTO;
 import com.pacientesCovid19.restful.dto.PacienteDTO;
 import com.pacientesCovid19.restful.model.Color;
 import com.pacientesCovid19.restful.model.Paciente;
@@ -141,12 +142,12 @@ public class PacienteService {
     public Paciente actualizarEstadoAtendido(Paciente paciente) {
         paciente.setStatus("Atendido");
         Paciente p = pacienteRepository.save(paciente);
-        
+
         // se libera un lugar
         Paciente proximoPaciente = pacienteRepository.proximoPacienteSiendoAtendido(paciente.getColor().getId());
-        if(proximoPaciente != null)
+        if (proximoPaciente != null) {
             actualizarEstadoSiendoAtendido(proximoPaciente);
-        
+        }
         return p;
     }
 
@@ -156,4 +157,13 @@ public class PacienteService {
         Paciente p = pacienteRepository.save(paciente);
     }
 
+    //Lista por filtros
+    public FilasPacientesDTO listarPorFiltros(FiltroDTO filtro) {
+        List<Color> lc = colorRepository.findAll();
+        lc.forEach(color -> {
+            List<Paciente> lista = pacienteRepository.listarPorFiltros(filtro.getNombre(), filtro.getDni(), filtro.getEstado(), color.getId());
+            seleccionarFila(lista, color.getColor());
+        });
+        return filas;
+    }
 }

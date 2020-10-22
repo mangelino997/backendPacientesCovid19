@@ -1,10 +1,12 @@
 package com.pacientesCovid19.restful.controller;
 
 import com.pacientesCovid19.restful.dto.FilasPacientesDTO;
+import com.pacientesCovid19.restful.dto.FiltroDTO;
 import com.pacientesCovid19.restful.dto.PacienteDTO;
 import com.pacientesCovid19.restful.model.Color;
 import com.pacientesCovid19.restful.model.Paciente;
 import com.pacientesCovid19.restful.service.PacienteService;
+import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,17 +55,11 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-
-    /*
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<?> actualizar(@Re) {
-        try {
-            
-            Paciente paciente = elementoService.actualizar(pacienteAtendido);
-            return ResponseEntity.status(HttpStatus.OK).body(paciente);
-        } catch (Error e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    
+    //Obtiene las filas de pacientes por filtro y color
+    @PostMapping("pacientes/listarPorFiltros")
+    public FilasPacientesDTO listarPorFiltros(@RequestBody FiltroDTO filtroDTO) throws IOException {
+        return elementoService.listarPorFiltros(filtroDTO);
     }
-     */
+
 }
