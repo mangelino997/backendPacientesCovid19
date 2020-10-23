@@ -1,6 +1,4 @@
 package com.pacientesCovid19.restful.repository;
-
-import com.pacientesCovid19.restful.model.Color;
 import com.pacientesCovid19.restful.model.Paciente;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +17,7 @@ public interface IPacienteImpl extends JpaRepository<Paciente, Long> {
     @Query(value = "SELECT count(*) FROM Pacientes where color_id = :idColor AND status= 'Siendo atendido'", nativeQuery = true)
     public int cantidadPacientesSiendoAtendidos(@Param("idColor") Long idColor);
 
-    //Obtiene el proximo paciente En espera que pasara a ser atendido
+    //Obtiene el próximo paciente "En espera" que pasará a ser atendido
     @Query(value = "SELECT * FROM Pacientes where color_id = :idColor and status = 'En espera' limit 1;", nativeQuery = true)
     public Paciente proximoPacienteSiendoAtendido(@Param("idColor") Long idColor);
 
@@ -32,7 +30,7 @@ public interface IPacienteImpl extends JpaRepository<Paciente, Long> {
     public List<Paciente> listarPorFiltros(@Param("name") String name, @Param("dni") String dni,
             @Param("status") String status, @Param("idColor") Long idColor);
 
-    //Obtiene una lista  por color y ordenada por fecha 
+    //Obtiene una lista por color y ordenada por fecha 
     public List<Paciente> findByColorIdOrderByDateAsc(long idColor);
 
     //Obtiene un paciente por id

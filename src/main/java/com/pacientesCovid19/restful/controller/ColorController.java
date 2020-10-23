@@ -1,5 +1,4 @@
 package com.pacientesCovid19.restful.controller;
-
 import com.pacientesCovid19.restful.model.Color;
 import com.pacientesCovid19.restful.service.ColorService;
 import java.util.List;
