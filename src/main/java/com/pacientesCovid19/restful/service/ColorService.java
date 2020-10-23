@@ -22,13 +22,13 @@ public class ColorService {
         return elementoDAO.findAll();
     }
 
-    public Color agregar(Color colorDiagnostic) {
-        Color c = elementoDAO.saveAndFlush(colorDiagnostic);
-        return c;
+    public Color agregar(Color color) {
+        Color elemento = elementoDAO.saveAndFlush(color);
+        return elemento;
     }
 
-    public Color actualizar(Color colorDiagnostic) {
-        Color c = elementoDAO.save(colorDiagnostic);
-        return c;
+    public Color actualizar(Color color) {
+        Color elemento = elementoDAO.save(color);
+        return elemento;
     }
 }

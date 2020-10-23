@@ -77,11 +77,10 @@ public class PacienteService {
         paciente.setDni(nuevoPaciente.getDni());
         paciente.setColor(color);
         paciente.setScore(puntaje);
-        paciente.setStatus("");
         paciente.setStatus(cantidadSiendoAtendidos(color) < color.getCant_max_patient() ? "Siendo atendido" : "En espera");
         paciente.setDate(date);
-        Paciente p = pacienteRepository.saveAndFlush(paciente);
-        return p;
+        Paciente elemento = pacienteRepository.saveAndFlush(paciente);
+        return elemento;
     }
 
     //Determina la cantidad de pacientes con estado Siendo Atendidos
@@ -141,26 +140,26 @@ public class PacienteService {
     //Actualiza el estado a Atendido
     public Paciente actualizarEstadoAtendido(Paciente paciente) {
         paciente.setStatus("Atendido");
-        Paciente p = pacienteRepository.save(paciente);
+        Paciente elemento = pacienteRepository.save(paciente);
 
         // se libera un lugar
         Paciente proximoPaciente = pacienteRepository.proximoPacienteSiendoAtendido(paciente.getColor().getId());
         if (proximoPaciente != null) {
             actualizarEstadoSiendoAtendido(proximoPaciente);
         }
-        return p;
+        return elemento;
     }
 
     //Actualiza el estado a Siendo Atendido (cuando se libera un lugar)
     public void actualizarEstadoSiendoAtendido(Paciente paciente) {
         paciente.setStatus("Siendo atendido");
-        Paciente p = pacienteRepository.save(paciente);
+        Paciente elemento = pacienteRepository.save(paciente);
     }
 
     //Lista por filtros
     public FilasPacientesDTO listarPorFiltros(FiltroDTO filtro) {
-        List<Color> lc = colorRepository.findAll();
-        lc.forEach(color -> {
+        List<Color> listaColores = colorRepository.findAll();
+        listaColores.forEach(color -> {
             List<Paciente> lista = pacienteRepository.listarPorFiltros(filtro.getNombre(), filtro.getDni(), filtro.getEstado(), color.getId());
             seleccionarFila(lista, color.getColor());
         });
